@@ -10,5 +10,11 @@ async def generate(request: Request):
     data = await request.json()
     prompt = data.get("prompt", "")
 
-    results = generator(prompt, max_length=100, num_return_sequences=1)
+    results = generator(
+        prompt,
+        max_new_tokens=100, 
+        truncation=True,    
+        pad_token_id=50256  
+    )
+
     return {"output": results[0]["generated_text"]}
