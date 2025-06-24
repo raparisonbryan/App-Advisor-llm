@@ -4,8 +4,8 @@ import torch
 
 app = FastAPI()
 
-tokenizer = AutoTokenizer.from_pretrained("gpt2")
-model = AutoModelForCausalLM.from_pretrained("gpt2")
+tokenizer = AutoTokenizer.from_pretrained("sshleifer/tiny-gpt2")
+model = AutoModelForCausalLM.from_pretrained("sshleifer/tiny-gpt2")
 
 @app.post("/generate")
 async def generate(request: Request):
