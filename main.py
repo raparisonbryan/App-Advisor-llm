@@ -12,13 +12,18 @@ async def generate(request: Request):
     body = await request.json()
     prompt = body.get("prompt", "")
 
+    print("Prompt reçu :", prompt)
+
     response = requests.post(
         HF_API_URL,
         headers={"Authorization": f"Bearer {HF_API_KEY}"},
         json={"inputs": prompt}
     )
 
+    print("Réponse Hugging Face brute:", response.status_code, response.text)
+
     if response.status_code != 200:
         return {"error": response.text}
 
     return {"output": response.json()}
+
