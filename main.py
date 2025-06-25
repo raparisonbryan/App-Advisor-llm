@@ -3,7 +3,7 @@ from transformers import pipeline
 
 app = FastAPI()
 
-generator = pipeline("text-generation", model="sshleifer/tiny-gpt2")
+generator = pipeline("text-generation", model="gpt2")
 
 @app.post("/generate")
 async def generate(request: Request):
