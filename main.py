@@ -1,20 +1,36 @@
-from fastapi import FastAPI, Request
-from transformers import pipeline
+from flask import Flask, request, jsonify
+from huggingface_hub import InferenceClient
+import os
 
-app = FastAPI()
+app = Flask(__name__)
 
-generator = pipeline("text-generation", model="gpt2")
 
-@app.post("/generate")
-async def generate(request: Request):
-    data = await request.json()
-    prompt = data.get("prompt", "")
+hf_token = os.environ.get("HUGGINGFACE_HUB_TOKEN")
+if not hf_token:
+    raise EnvironmentError("HUGGINGFACE_HUB_TOKEN manquant dans les variables d'environnement")
 
-    results = generator(
-        prompt,
-        max_new_tokens=100, 
-        truncation=True,    
-        pad_token_id=50256  
+client = InferenceClient(
+    model="mistralai/Mistral-7B-Instruct-v0.3",
+    api_key=hf_token
+)
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    user_input = data.get("message") if data else None
+
+    if not user_input:
+        return jsonify({"error": "Champ 'message' requis"}), 400
+
+    response = client.chat.completions.create(
+        model="mistralai/Mistral-7B-Instruct-v0.3",
+        messages=[
+            {"role": "user", "content": user_input}
+        ]
     )
 
-    return {"output": results[0]["generated_text"]}
+    return jsonify({"response": response.choices[0].message.content})
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5005)
