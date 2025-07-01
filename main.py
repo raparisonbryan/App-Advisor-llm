@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
 from huggingface_hub import InferenceClient
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app)
 
 hf_token = os.environ.get("HUGGINGFACE_HUB_TOKEN")
 if not hf_token:
